@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Listado de Autos</title>
+</head>
+<body>
+
+  <h1>Listado de Autos desde Supabase</h1>
+
+  <table border="1">
+    <thead>
+      <tr>
+        <th>Patente</th>
+        <th>Marca</th>
+        <th>Color</th>
+        <th>Estado</th>
+        <th>Fecha de Registro</th>
+      </tr>
+    </thead>
+    <tbody id="tablaAutos"></tbody>
+  </table>
+
+  <!-- Librería Supabase (CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const SUPABASE_URL = "https://lozjskdvvatubtukjrwy.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxvempza2R2dmF0dWJ0dWtqcnd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjExNTI0NzIsImV4cCI6MjA3NjcyODQ3Mn0.nEgP-K432FYHsUah4qpReHzz1srUjAE5wKrx7KpiQLg";
+
+    // ✅ Crear cliente Supabase
+    const { createClient } = supabase;
+    const client = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    async function cargarAutos() {
+      const { data, error } = await client.from("Auto").select("*");
+
+      if (error) {
+        console.error("❌ Error al obtener los datos:", error);
+        return;
+      }
+
+      const tabla = document.getElementById("tablaAutos");
+      tabla.innerHTML = "";
+
+      // ✅ Recorre los registros y crea filas
+      data.forEach(auto => {
+        const fila = document.createElement("tr");
+        fila.innerHTML = `
+          <td>${auto.patente}</td>
+          <td>${auto.marca}</td>
+          <td>${auto.color}</td>
+          <td>${auto.estado}</td>
+          <td>${auto.fechaRegistro}</td>
+        `;
+        tabla.appendChild(fila);
+      });
+    }
+
+    cargarAutos();
+
+    //<!--SQL DE CREACIÓN: 
+     //create table Auto (
+     //patente int primary key,
+     //marca varchar(50),
+     //color varchar(30),
+     //estado boolean,
+     //fechaRegistro date);-->
+
+  </script>
+
+
+</body>
+</html>
